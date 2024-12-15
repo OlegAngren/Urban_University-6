@@ -1,0 +1,92 @@
+import random
+
+# Базовый класс Animal
+class Animal:
+    live = True  # Живое существо
+    sound = None  # Звук по умолчанию отсутствует
+    _DEGREE_OF_DANGER = 0  # Степень опасности существа
+
+    def __init__(self, speed):
+        self.speed = speed  # Скорость передвижения существа
+        self._cords = [0, 0, 0]  # Координаты в пространстве
+
+    def move(self, dx, dy, dz):
+        # Проверяем, можно ли изменить координату z
+        if self._cords[2] + dz < 0:
+            print("It's too deep, i can't dive :(")
+            return
+        # Обновляем координаты с учетом скорости
+        self._cords[0] += dx * self.speed
+        self._cords[1] += dy * self.speed
+        self._cords[2] += dz * self.speed
+
+    def get_cords(self):
+        # Выводим текущие координаты
+        print(f"X: {self._cords[0]} Y: {self._cords[1]} Z: {self._cords[2]}")
+
+    def attack(self):
+        # Проверяем степень опасности и выводим соответствующее сообщение
+        if self._DEGREE_OF_DANGER < 5:
+            print("Sorry, i'm peaceful :)")
+        else:
+            print("Be careful, i'm attacking you 0_0")
+
+    def speak(self):
+        # Выводим звук существа
+        if self.sound:
+            print(self.sound)
+        else:
+            print("...")
+
+# Класс Bird, наследуется от Animal
+class Bird(Animal):
+    beak = True  # Наличие клюва
+
+    def lay_eggs(self):
+        # Генерация случайного числа от 1 до 4 и вывод количества яиц
+        eggs = random.randint(1, 4)
+        print(f"Here are(is) {eggs} eggs for you")
+
+# Класс AquaticAnimal, наследуется от Animal
+class AquaticAnimal(Animal):
+    _DEGREE_OF_DANGER = 3  # Переопределяем степень опасности
+
+    def dive_in(self, dz):
+        # Погружаемся, уменьшая координату z, скорость движения делим на 2
+        dz = -abs(dz)  # Уменьшаем значение координаты z (берем модуль и делаем отрицательным)
+        self.move(0, 0, dz / 2)
+
+# Класс PoisonousAnimal, наследуется от Animal
+class PoisonousAnimal(Animal):
+    _DEGREE_OF_DANGER = 8  # Переопределяем степень опасности
+
+# Класс Duckbill, наследуется от Bird, AquaticAnimal, PoisonousAnimal
+class Duckbill(Bird, AquaticAnimal, PoisonousAnimal):
+    sound = "Click-click-click"  # Утконос издает звук "Click-click-click"
+
+    def __init__(self, speed):
+        # Инициализируем родительский класс (Bird, так как он первый в MRO)
+        super().__init__(speed)
+
+# Пример работы программы
+if __name__ == "__main__":
+    db = Duckbill(10)  # Создаем утконоса со скоростью 10
+
+    # Проверяем базовые атрибуты
+    print(db.live)  # True
+    print(db.beak)  # True
+
+    # Утконос издает звук и атакует
+    db.speak()  # Click-click-click
+    db.attack()  # Be careful, i'm attacking you 0_0
+
+    # Утконос перемещается в пространстве
+    db.move(1, 2, 3)  # Двигаемся в направлении x, y, z
+    db.get_cords()  # X: 10 Y: 20 Z: 30
+
+    # Утконос ныряет
+    db.dive_in(6)  # Ныряем на 6 единиц
+    db.get_cords()  # X: 10 Y: 20 Z: 0
+
+    # Утконос откладывает яйца
+    db.lay_eggs()  # Here are(is) <random> eggs for you
