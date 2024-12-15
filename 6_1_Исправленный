@@ -1,0 +1,79 @@
+# Создаем базовый класс Animal
+class Animal:
+    def __init__(self, name):
+        self.name = name  # Индивидуальное имя животного
+        self.alive = True  # Животное изначально живо
+        self.fed = False  # Животное изначально не накормлено
+
+# Создаем базовый класс Plant
+class Plant:
+    def __init__(self, name):
+        self.name = name  # Индивидуальное имя растения
+        self.edible = False  # Растение изначально несъедобное
+
+# Класс Mammal, наследник Animal
+class Mammal(Animal):
+    def eat(self, food):
+        # Проверяем, является ли переданный объект экземпляром класса Plant
+        if not isinstance(food, Plant):
+            print(f"{self.name} не может есть {type(food).__name__}. Это не растение.")
+            return
+        
+        # Логика съедобности
+        if food.edible:
+            print(f"{self.name} съел {food.name}")
+            self.fed = True  # Животное насытилось
+        else:
+            print(f"{self.name} не стал есть {food.name}")
+            self.alive = False  # Животное погибло
+
+# Класс Predator, наследник Animal
+class Predator(Animal):
+    def eat(self, food):
+        # Проверяем, является ли переданный объект экземпляром класса Plant
+        if not isinstance(food, Plant):
+            print(f"{self.name} не может есть {type(food).__name__}. Это не растение.")
+            return
+        
+        # Логика съедобности
+        if food.edible:
+            print(f"{self.name} съел {food.name}")
+            self.fed = True  # Животное насытилось
+        else:
+            print(f"{self.name} не стал есть {food.name}")
+            self.alive = False  # Животное погибло
+
+# Класс Flower, наследник Plant
+class Flower(Plant):
+    def __init__(self, name):
+        super().__init__(name)  # Инициализируем атрибуты базового класса
+        # edible не переопределяется, остается False (несъедобное растение)
+
+# Класс Fruit, наследник Plant
+class Fruit(Plant):
+    def __init__(self, name):
+        super().__init__(name)  # Инициализируем атрибуты базового класса
+        self.edible = True  # Переопределяем атрибут edible, фрукт съедобный
+
+# Пример использования классов
+if __name__ == "__main__":
+    # Создаем объекты животных
+    a1 = Predator('Волк с Уолл-Стрит')
+    a2 = Mammal('Хатико')
+
+    # Создаем объекты растений
+    p1 = Flower('Цветик семицветик')
+    p2 = Fruit('Заводной апельсин')
+
+    # Проверяем работу программы
+    print(a1.name)  # Выводим имя хищника
+    print(p1.name)  # Выводим имя цветка
+
+    print(a1.alive)  # Состояние жизни хищника (True)
+    print(a2.fed)    # Состояние насыщения млекопитающего (False)
+
+    a1.eat(p1)  # Хищник пытается съесть несъедобный цветок
+    a2.eat(p2)  # Млекопитающее ест съедобный фрукт
+
+    print(a1.alive)  # Хищник погиб (False)
+    print(a2.fed)    # Млекопитающее насытилось (True)
